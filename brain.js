@@ -1,7 +1,3 @@
-function update(p, l, fp) {
-	return p*l/(p*l + ((1-p)*fp)) 
-}
-
 function check_input() {
 	let inputs = document.getElementsByClassName("probability")
 	for (i = 0; i < inputs.length; i++) {
@@ -14,24 +10,19 @@ function check_input() {
 }
 
 var vm = new Vue({
-	el: "#main-wrapper",
+	el: "#root",
 	data: {
-		prior: undefined,
-		likely: undefined,
-		false_pos: undefined,
-		result: undefined
+		prior: null,
+		likely: null,
+		false_pos: null,
+	},
+	computed: {
+		result: function () {
+			if (this.prior && this.likely && this.false_pos) {
+				return this.prior*this.likely / ( this.prior*this.likely + ((1-this.prior)*this.false_pos) )
+			} else {
+				return null
+			}
+		}
 	}
 });
-
-vm.$watch("prior", function(value, old) {
-	vm.result = update(value, vm.likely, vm.false_pos)
-	check_input()
-	})
-vm.$watch("likely", function(value, old) {
-	vm.result = update(vm.prior, value, vm.false_pos)
-	check_input()
-	})
-vm.$watch("false_pos", function(value, old) {
-	vm.result = update(vm.prior, vm.likely, value)
-	check_input()
-	})
